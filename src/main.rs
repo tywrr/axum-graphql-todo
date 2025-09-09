@@ -1,6 +1,3 @@
-use std::net::SocketAddr;
-use std::sync::Arc;
-
 use axum::{
     Router,
     extract::{Extension, Json},
@@ -11,6 +8,7 @@ use juniper::http::{GraphQLRequest, graphiql::graphiql_source};
 use juniper::{EmptySubscription, FieldResult, GraphQLObject, RootNode, graphql_object};
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 use uuid::Uuid;
 
 #[derive(Clone, Debug, Serialize, Deserialize, GraphQLObject)]
@@ -85,8 +83,8 @@ async fn graphql_handler(
     Json(res)
 }
 
-#[tokio::main]
-async fn main() {
+#[shuttle_runtime::main]
+async fn main() -> shuttle_axum::ShuttleAxum {
     let initial = vec![Todo {
         id: Uuid::new_v4().to_string(),
         title: "Buy milk".into(),
@@ -108,11 +106,5 @@ async fn main() {
         .layer(Extension(schema))
         .layer(Extension(ctx));
 
-    let addr: SocketAddr = "127.0.0.1:4000".parse().unwrap();
-    println!("GraphiQL: http://{}/graphiql", addr);
-
-    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    axum::serve(listener, app.into_make_service())
-        .await
-        .unwrap();
+    Ok(app.into())
 }
