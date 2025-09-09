@@ -1,0 +1,13 @@
+[package]
+name = "axum-graphql-todo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.4"
+juniper = "0.16.2"
+juniper_axum = "0.2.0"
+parking_lot = "0.12.4"
+serde = { version = "1.0.219", features = ["derive"] }
+tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
+uuid = { version = "1.18.1", features = ["v4"] }
